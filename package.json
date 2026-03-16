@@ -1,0 +1,53 @@
+{
+  "name": "@generativereality/herd",
+  "version": "0.1.0",
+  "description": "Agent session manager for AI coding tools. Terminal tabs as the UI, no tmux.",
+  "type": "module",
+  "bin": {
+    "herd": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    ".claude"
+  ],
+  "scripts": {
+    "dev": "bun run ./src/index.ts",
+    "build": "tsdown",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "check": "bun run typecheck && bun run build",
+    "release": "bumpp && npm publish",
+    "prepack": "bun run build"
+  },
+  "keywords": [
+    "claude-code",
+    "ai-agents",
+    "session-manager",
+    "wave-terminal",
+    "herd",
+    "agentherder"
+  ],
+  "author": "motin",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/generativereality/agentherder"
+  },
+  "homepage": "https://agentherder.com",
+  "engines": {
+    "node": ">=20.19.4"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.9.1",
+    "consola": "^3.4.0",
+    "gunshi": "^0.23.0",
+    "update-notifier": "^7.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/update-notifier": "^6.0.8",
+    "bumpp": "^9.11.1",
+    "tsdown": "^0.12.0",
+    "typescript": "^5.8.0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "@generativereality/agentherder-docs",
+  "private": true,
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "deploy": "bun run build && wrangler pages deploy .vitepress/dist --project-name herd-docs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.3",
+    "wrangler": "^3.114.0"
+  },
+  "type": "module"
+}
