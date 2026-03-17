@@ -1,37 +1,31 @@
 # herd
 
-**Agent session manager for AI coding tools.**
+**Run a fleet of Claude Code sessions. From the CLI — or from Claude itself.**
 
-The terminal tab IS the UI. No tmux, no dashboards — just your terminal tabs, each running a focused Claude Code session, orchestrated by a simple CLI that Claude Code itself can call.
+```bash
+herd new auth ~/Dev/myapp       # new tab, claude starts
+herd new api ~/Dev/myapp
+herd new infra ~/Dev/myapp
 
+herd sessions                   # what's running across all tabs
+herd scrollback auth            # read what auth is doing without switching tabs
+herd send api --file task.txt   # drop a prompt into any session
+herd fork auth -n auth-v2       # branch a conversation, keep the original
 ```
-herd sessions      # what's running
-herd new auth ~/Dev/myapp
-herd fork auth -n auth-v2
-herd send abc123 "approve\n"
-```
+
+No tmux. No dashboard. Your terminal tabs are the UI.
 
 → [agentherder.com](https://agentherder.com)
 
 ---
 
-## Why herd
+## The idea
 
-Most multi-session tools either wrap tmux (awkward scrolling, copy-paste friction) or build a TUI on top of your terminal (another UI layer you didn't ask for).
+When you're running multiple Claude Code sessions in parallel, you lose track fast. Which tab is working on what? Did it finish? Is it waiting for input?
 
-herd takes a different approach: **your terminal tabs are already the multiplexer**. herd just gives you a CLI to drive them — open tabs, name them, fork sessions, read their output, send input — with Claude Code sessions as first-class citizens.
+herd solves this with a simple CLI that treats **terminal tabs as the unit of orchestration** — open them by name, read their output, send them prompts, fork them, close them. Everything stays in sync: the tab title, the Claude session name, and the working directory.
 
-The key insight: Claude Code's `-n/--name` flag already syncs the session name to the terminal tab title. herd builds on this to keep tab names, session names, and project directories in sync automatically.
-
-## Features
-
-- **Session-aware tab management** — open, resume, fork, close, rename tabs by name
-- **Fork sessions** — branch an existing conversation into a new independent tab
-- **Claude Code skill included** — Claude can call `herd` itself to orchestrate parallel work
-- **Config-driven defaults** — set flags like `--dangerously-skip-permissions` once
-- **Tab name = session name** — always in sync via `--name`
-- **Workspace-aware** — target specific Wave workspaces with `-w`
-- **Scriptable** — plain CLI, composable in hooks and automation
+The killer feature: **Claude can run herd itself.** Install the skill and your Claude Code session can spawn parallel sibling sessions, monitor their output, and coordinate across them — without you switching tabs.
 
 ## Install
 
@@ -39,64 +33,68 @@ The key insight: Claude Code's `-n/--name` flag already syncs the session name t
 npm install -g @generativereality/herd
 ```
 
-**Requirements:** Wave Terminal · macOS · Node.js 20+
+**Requirements:** [Wave Terminal](https://waveterm.dev) · macOS · Node.js 20+
 
-**One-time setup:** Wave Terminal needs Accessibility permission:
-System Settings → Privacy & Security → Accessibility → Wave Terminal ✓
+**One-time:** Wave needs Accessibility permission — System Settings → Privacy & Security → Accessibility → Wave ✓
 
 ## Usage
 
 ```
-herd sessions                         List tabs with active/idle session status
-herd list                             List all workspaces, tabs, and blocks
-herd new <name> [dir] [-w workspace]  Open new tab, launch claude
-herd resume <name> [dir]              Open new tab, run: claude --continue
-herd fork <tab-name> [-n new-name]    Fork a session into a new tab
-herd close <name-or-id>               Close a tab
-herd rename <tab> <new-name>          Rename a tab
-herd scrollback <tab-or-block> [n]   Read terminal output (default: 50 lines)
-herd send <tab-or-block> [text]       Send input — text arg, --file, or stdin
-herd config                           Show config file path and current values
+herd sessions                          what's running (active/idle status)
+herd list                              all workspaces, tabs, and blocks
+herd new <name> [dir] [-w workspace]   open tab, start claude
+herd resume <name> [dir]               open tab, run claude --continue
+herd fork <tab> [-n new-name]          fork a session into a new tab
+herd close <tab>                       close a tab
+herd rename <tab> <new-name>           rename a tab
+herd scrollback <tab> [lines]          read terminal output (default: 50 lines)
+herd send <tab> [text]                 send input — arg, --file, or stdin pipe
+herd config                            show config path and values
 ```
 
-### Spin up parallel sessions
+Tab names match by prefix. Block IDs can be shortened to 8 chars.
+
+### Spin up a session fleet
 
 ```bash
-herd sessions                          # see what's already active
+herd sessions                 # check what's already running first
 
 herd new auth ~/Dev/myapp
-herd new api ~/Dev/myapp
+herd new payments ~/Dev/myapp
 herd new infra ~/Dev/myapp
+```
+
+Each tab gets named, Claude's session name syncs to the tab title via `--name`.
+
+### Send a prompt
+
+```bash
+# From a file (good for long context-heavy prompts)
+herd send auth --file ~/prompts/task.txt
+
+# Via stdin
+echo "focus on the edge cases in the OAuth flow" | herd send auth
+
+# Quick reply or approval
+herd send auth "yes\n"
+herd send auth "/clear\n"
+```
+
+### Check in without switching tabs
+
+```bash
+herd scrollback auth          # last 50 lines
+herd scrollback auth 200      # last 200 lines
 ```
 
 ### Fork a session
 
 ```bash
-# Try an alternative approach without disrupting the original
-herd fork auth -n auth-attempt2
+# Try a different approach without losing the original conversation
+herd fork auth -n auth-v2
 ```
 
-Runs `claude --resume <session-id> --fork-session` in a new tab — shares context from the source session but creates an independent conversation.
-
-### Read and send
-
-```bash
-# Check what's happening in a session without switching to it
-herd scrollback auth
-herd scrollback auth 200
-
-# Send a prompt from a file
-herd send auth --file ~/prompts/task.txt
-
-# Pipe a prompt via stdin
-echo "please review this PR" | herd send auth
-
-# Send a quick reply
-herd send auth "yes\n"
-
-# Send a slash command
-herd send auth "/clear\n"
-```
+Runs `claude --resume <id> --fork-session` — new independent session, full shared context from the original.
 
 ### Target a workspace
 
@@ -104,23 +102,9 @@ herd send auth "/clear\n"
 herd new api ~/Dev/myapp -w work
 ```
 
-## Config
-
-```toml
-# ~/.config/herd/config.toml
-
-[claude]
-# Extra flags passed to every `claude` invocation.
-flags = ["--allow-dangerously-skip-permissions"]
-
-[defaults]
-# Default Wave workspace for new sessions.
-# workspace = ""
-```
-
 ## Claude Code Skill
 
-Install the skill so Claude Code itself can manage sessions:
+The real unlock: install the herd skill so **Claude Code can herd itself**.
 
 ```bash
 mkdir -p .claude/skills/herd
@@ -129,33 +113,39 @@ curl -fsSL https://raw.githubusercontent.com/generativereality/agentherder/main/
 ```
 
 With the skill installed, Claude can:
-- Check what sessions are running (`herd sessions`)
-- Spawn parallel sessions for independent tasks (`herd new api ~/Dev/myapp`)
-- Fork its own session to try alternative approaches (`herd fork auth`)
-- Monitor sibling sessions (`herd scrollback auth`)
-- Send input to coordinate across sessions (`herd send auth "approve\n"`)
 
-## Terminal Support
+- Check what's running before starting duplicate work (`herd sessions`)
+- Spawn a parallel session for an independent subtask (`herd new payments ~/Dev/myapp`)
+- Monitor siblings without interrupting them (`herd scrollback payments`)
+- Drop a prompt into any session (`herd send payments --file spec.txt`)
+- Fork its own session to explore an alternative approach (`herd fork auth`)
+
+Claude becomes the orchestrator of its own fleet.
+
+## Config
+
+```toml
+# ~/.config/herd/config.toml
+
+[claude]
+# Flags passed to every claude invocation
+flags = ["--allow-dangerously-skip-permissions"]
+
+[defaults]
+# Default Wave workspace for new sessions
+# workspace = ""
+```
+
+## Terminal support
 
 | Terminal | Status |
 |----------|--------|
-| Wave Terminal | ✅ Full support |
+| [Wave Terminal](https://waveterm.dev) | ✅ Full support |
 | iTerm2 | Planned |
 | Ghostty | Planned |
 | Warp | Planned |
 
-herd auto-detects the terminal from environment variables. Wave Terminal is supported today via unix socket RPC. Other terminals will be added as adapters — contributions welcome.
-
-## Comparison
-
-| | herd | claude-squad | ccmanager | agent-deck |
-|---|---|---|---|---|
-| No tmux required | ✅ | ❌ | ❌ | ❌ |
-| Terminal tabs as UI | ✅ | ❌ | ❌ | ❌ |
-| Claude Code skill | ✅ | ❌ | ❌ | ❌ |
-| Fork sessions | ✅ | ❌ | ❌ | ❌ |
-| Tab title sync | ✅ | ❌ | ❌ | ❌ |
-| Lightweight CLI | ✅ | ❌ | ✅ | ❌ |
+Wave is supported via its unix socket RPC. Other terminals will follow as adapters — PRs welcome.
 
 ## License
 
