@@ -16,7 +16,7 @@
 
 ```bash
 /plugin marketplace add generativereality/plugins
-/plugin install agentherder@plugins
+/plugin install agentherder@generativereality
 ```
 
 **Via npm** (CLI only):

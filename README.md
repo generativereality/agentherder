@@ -33,7 +33,7 @@ The killer feature: **Claude can run herd itself.** Install the skill and your C
 
 ```bash
 /plugin marketplace add generativereality/plugins
-/plugin install agentherder@plugins
+/plugin install agentherder@generativereality
 ```
 
 **Via npm** (CLI only):

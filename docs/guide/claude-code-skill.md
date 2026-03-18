@@ -8,7 +8,7 @@ The included skill lets Claude Code call `herd` itself — checking what session
 
 ```bash
 /plugin marketplace add generativereality/plugins
-/plugin install agentherder@plugins
+/plugin install agentherder@generativereality
 ```
 
 **Manually** (if you installed the CLI via npm):
