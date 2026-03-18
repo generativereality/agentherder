@@ -4,7 +4,7 @@ layout: home
 hero:
   name: Agent Herder
   text: Run a fleet of Claude Code sessions
-  tagline: Terminal tabs as the UI. No tmux. CLI is `herd`.
+  tagline: Terminal tabs as the UI. No tmux.
   actions:
     - theme: brand
       text: Get Started
