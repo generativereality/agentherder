@@ -1,9 +1,0 @@
-{
-  "name": "herd",
-  "description": "Agent session manager — run a fleet of Claude Code sessions from the CLI, or let Claude orchestrate its own sibling sessions.",
-  "version": "0.1.0",
-  "author": {
-    "name": "generativereality"
-  },
-  "homepage": "https://agentherder.com"
-}
