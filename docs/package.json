@@ -2,7 +2,7 @@
   "name": "@generativereality/agentherder-docs",
   "private": true,
   "scripts": {
-    "dev": "vitepress dev",
+    "dev": "vitepress dev --port 7417",
     "build": "vitepress build",
     "preview": "vitepress preview",
     "deploy": "bun run build && wrangler pages deploy .vitepress/dist --project-name herd-docs"
