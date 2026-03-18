@@ -19,11 +19,11 @@ Sessions
 
 Workspace: work (current)
 
-  [a1b2c3d4] "horizon" ◄  ~/Dev/horizon
+  [a1b2c3d4] "auth" ◄  ~/Dev/myapp
     ● active
-  [e5f6a7b8] "api"  ~/Dev/api
+  [e5f6a7b8] "api"  ~/Dev/myapp
     ○ idle
-  [c9d0e1f2] "infra"  ~/Dev/infra
+  [c9d0e1f2] "infra"  ~/Dev/myapp
       terminal
     last: $ git status
 ```
@@ -84,8 +84,6 @@ Close a tab by name or ID prefix.
 herd close <name-or-id>
 ```
 
-Tab names are matched by exact name or prefix (case-insensitive).
-
 ## herd rename
 
 Rename a tab.
@@ -96,32 +94,31 @@ herd rename <name-or-id> <new-name>
 
 ## herd scrollback
 
-Read terminal output for a block.
+Read terminal output for a tab or block.
 
 ```bash
-herd scrollback <block-id> [lines]
+herd scrollback <tab-or-block> [lines]
 ```
 
-Default: last 50 lines. Block ID can be the 8-character prefix shown in `herd list`.
+Default: last 50 lines. Accepts a tab name, tab ID prefix, or block ID prefix.
 
 ## herd send
 
-Send keyboard input to a terminal block.
+Send input to a tab or terminal block.
 
 ```bash
-herd send <block-id> <text>
+herd send <tab-or-block> [text] [--file <path>]
 ```
 
-| Escape | Meaning |
+| Source | Example |
 |--------|---------|
-| `\n` | Enter |
-| `\t` | Tab |
+| Inline text | `herd send auth "yes\n"` |
+| File | `herd send auth --file ~/prompts/task.txt` |
+| Stdin | `echo "do the thing" \| herd send auth` |
 
-Examples:
-```bash
-herd send abc12345 "yes\n"
-herd send abc12345 "/clear\n"
-```
+Escape sequences in inline text: `\n` = Enter, `\t` = Tab.
+
+Accepts a tab name (resolves to its first terminal block), or a block ID prefix.
 
 ## herd config
 

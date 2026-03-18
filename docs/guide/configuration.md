@@ -9,7 +9,7 @@ Created automatically on first run of `herd config`.
 ```toml
 [claude]
 # Extra flags passed to every `claude` invocation.
-# flags = ["--dangerously-skip-permissions"]
+flags = ["--allow-dangerously-skip-permissions"]
 
 [defaults]
 # Default Wave workspace to open new sessions in.
@@ -20,16 +20,13 @@ Created automatically on first run of `herd config`.
 
 Flags appended to every `claude` command launched by `herd new`, `herd resume`, and `herd fork`.
 
-Common values:
+The default config ships with `--allow-dangerously-skip-permissions` enabled — remove it if you prefer manual permission prompts.
+
+Other examples:
 
 ```toml
 [claude]
-flags = ["--dangerously-skip-permissions"]
-```
-
-```toml
-[claude]
-flags = ["--model", "sonnet", "--dangerously-skip-permissions"]
+flags = ["--model", "sonnet", "--allow-dangerously-skip-permissions"]
 ```
 
 ## defaults.workspace

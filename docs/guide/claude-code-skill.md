@@ -4,38 +4,50 @@ The included skill lets Claude Code call `herd` itself — checking what session
 
 ## Install
 
+**Via plugin** (recommended — also installs the CLI):
+
+```bash
+/plugin marketplace add generativereality/agentherder
+/plugin install herd@agentherder
+```
+
+**Manually** (if you installed the CLI via npm):
+
 ```bash
 mkdir -p .claude/skills/herd
-curl -fsSL https://raw.githubusercontent.com/generativereality/agentherder/main/.claude/skills/herd/SKILL.md \
+curl -fsSL https://raw.githubusercontent.com/generativereality/agentherder/main/skills/herd/SKILL.md \
   -o .claude/skills/herd/SKILL.md
 ```
+
+The skill auto-installs the `herd` CLI via npm if it's not already on your PATH.
 
 ## What Claude can do with it
 
 **Check what's running:**
-```
+```bash
 herd sessions
 ```
 
-**Spawn a parallel session for an independent task:**
-```
-herd new api-work ~/Dev/horizon
-herd send <block-id> "implement the billing endpoint per docs/api.md\n"
+**Spawn a parallel session and send it a task:**
+```bash
+herd new payments ~/Dev/myapp
+herd send payments --file /tmp/task.txt
+echo "implement the billing endpoint" | herd send payments
 ```
 
 **Fork its own session to try an alternative approach:**
-```
-herd fork horizon -n horizon-attempt2
+```bash
+herd fork auth -n auth-v2
 ```
 
 **Monitor a sibling session without switching to it:**
-```
-herd scrollback <block-id> 100
+```bash
+herd scrollback payments 100
 ```
 
 **Approve a tool call in another session:**
-```
-herd send <block-id> "yes\n"
+```bash
+herd send payments "yes\n"
 ```
 
 ## How it works
@@ -45,4 +57,4 @@ The skill (`SKILL.md`) is loaded into Claude Code's context when placed in `.cla
 - The full command reference
 - Workflow patterns for common multi-session tasks
 - Tab naming conventions
-- Notes on what `herd` can and can't do
+- Auto-install logic for the CLI itself

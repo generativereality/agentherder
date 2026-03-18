@@ -12,14 +12,17 @@
 
 ## Install
 
+**As a Claude Code plugin** (installs the CLI + skill in one step):
+
 ```bash
-npm install -g @generativereality/agentherder
+/plugin marketplace add generativereality/agentherder
+/plugin install herd@agentherder
 ```
 
-Or with bun:
+**Via npm** (CLI only):
 
 ```bash
-bun install -g @generativereality/agentherder
+npm install -g @generativereality/herd
 ```
 
 Verify:
@@ -54,11 +57,11 @@ The tab title and Claude session name are in sync from the start.
 
 ## Add the Claude Code skill
 
-Copy the skill into your project so Claude can use herd itself:
+If you installed via npm rather than the plugin, add the skill manually:
 
 ```bash
 mkdir -p .claude/skills/herd
-curl -fsSL https://raw.githubusercontent.com/generativereality/agentherder/main/.claude/skills/herd/SKILL.md \
+curl -fsSL https://raw.githubusercontent.com/generativereality/agentherder/main/skills/herd/SKILL.md \
   -o .claude/skills/herd/SKILL.md
 ```
 

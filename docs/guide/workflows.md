@@ -5,9 +5,9 @@
 ```bash
 herd sessions                          # check what's already running
 
-herd new horizon ~/Dev/horizon
-herd new api ~/Dev/api
-herd new infra ~/Dev/infra
+herd new auth ~/Dev/myapp
+herd new api ~/Dev/myapp
+herd new infra ~/Dev/myapp
 ```
 
 Each tab is named automatically and the Claude session name is synced to the tab title via `--name`.
@@ -17,8 +17,8 @@ Each tab is named automatically and the Claude session name is synced to the tab
 ```bash
 herd sessions    # see which tabs are terminal (no claude running)
 
-herd resume horizon ~/Dev/horizon
-herd resume api ~/Dev/api
+herd resume auth ~/Dev/myapp
+herd resume api ~/Dev/myapp
 ```
 
 `resume` runs `claude --continue`, picking up the last conversation.
@@ -28,8 +28,8 @@ herd resume api ~/Dev/api
 Fork when you want to try an alternative approach without disrupting the original:
 
 ```bash
-herd fork horizon                   # creates "horizon-fork"
-herd fork horizon -n horizon-v2     # creates "horizon-v2"
+herd fork auth                   # creates "auth-fork"
+herd fork auth -n auth-v2        # creates "auth-v2"
 ```
 
 Under the hood: finds the most recent Claude session ID for that tab's directory, then opens a new tab with `claude --resume <session-id> --fork-session`.
@@ -37,18 +37,24 @@ Under the hood: finds the most recent Claude session ID for that tab's directory
 ## Reading a session without switching to it
 
 ```bash
-herd scrollback abc12345        # last 50 lines
-herd scrollback abc12345 200    # last 200 lines
+herd scrollback auth          # last 50 lines (by tab name)
+herd scrollback auth 200      # last 200 lines
+herd scrollback abc12345      # by block ID prefix
 ```
-
-Get the block ID from `herd list`.
 
 ## Sending input to a session
 
 ```bash
-herd send abc12345 "yes\n"      # approve a tool call
-herd send abc12345 "\n"         # press enter
-herd send abc12345 "/clear\n"   # send a slash command
+# By tab name (resolves to its terminal block automatically)
+herd send auth "yes\n"           # approve a tool call
+herd send auth "\n"              # press enter
+herd send auth "/clear\n"        # send a slash command
+
+# Send a full prompt from a file
+herd send auth --file ~/prompts/task.txt
+
+# Pipe via stdin
+echo "please review this PR" | herd send auth
 ```
 
 `\n` = Enter, `\t` = Tab.
@@ -56,7 +62,7 @@ herd send abc12345 "/clear\n"   # send a slash command
 ## Targeting a workspace
 
 ```bash
-herd new api ~/Dev/api -w work
+herd new api ~/Dev/myapp -w work
 ```
 
 Opens the new tab in the Wave workspace named "work".
