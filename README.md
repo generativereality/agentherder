@@ -133,6 +133,23 @@ With the skill installed, Claude can:
 
 Claude becomes the orchestrator of its own fleet.
 
+## Tip: pair with Claude Code Remote Control
+
+Claude Code's [Remote Control](https://docs.anthropic.com/en/docs/claude-code/remote-control) lets you access a local session from any device — phone, tablet, browser — via `claude.ai/code`. The session still runs on your machine, with full filesystem and tool access.
+
+Paired with Agent Herder, the pattern is:
+
+1. Start a **command session** with Remote Control enabled:
+   ```bash
+   claude --remote-control "command"
+   ```
+2. From your phone or browser, connect to that session and assign work:
+   > *"Spawn three sessions — auth, payments, infra — and start them on these tasks..."*
+3. The command session uses `herd` to open tabs, send prompts, and check in on workers
+4. You monitor and steer the whole fleet from your phone while the machine does the work
+
+One remote-controlled session orchestrating a local fleet.
+
 ## Config
 
 ```toml
