@@ -1,18 +1,19 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: 'herd',
-  description: 'Agent session manager for AI coding tools. Terminal tabs as the UI, no tmux.',
+  title: 'Agent Herder',
+  description: 'Run a fleet of Claude Code sessions. Terminal tabs as the UI, no tmux. CLI is herd.',
   lang: 'en-US',
 
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
-    ['meta', { name: 'og:title', content: 'herd — agent session manager' }],
-    ['meta', { name: 'og:description', content: 'Terminal tabs as the UI. No tmux.' }],
+    ['meta', { name: 'og:title', content: 'Agent Herder — run a fleet of Claude Code sessions' }],
+    ['meta', { name: 'og:description', content: 'Terminal tabs as the UI. No tmux. CLI is herd.' }],
   ],
 
   themeConfig: {
     logo: '/logo.svg',
+    siteTitle: 'Agent Herder',
     nav: [
       { text: 'Guide', link: '/guide/what-is-herd' },
       { text: 'Reference', link: '/reference/commands' },

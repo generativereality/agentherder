@@ -2,9 +2,9 @@
 layout: home
 
 hero:
-  name: herd
-  text: Agent session manager for AI coding tools
-  tagline: Terminal tabs as the UI. No tmux.
+  name: Agent Herder
+  text: Run a fleet of Claude Code sessions
+  tagline: Terminal tabs as the UI. No tmux. CLI is `herd`.
   actions:
     - theme: brand
       text: Get Started

@@ -1,6 +1,8 @@
-# herd
+# Agent Herder
 
 **Run a fleet of Claude Code sessions. From the CLI — or from Claude itself.**
+
+CLI command: `herd` · Website: [agentherder.com](https://agentherder.com)
 
 ```bash
 herd new auth ~/Dev/myapp       # new tab, claude starts
@@ -14,8 +16,6 @@ herd fork auth -n auth-v2       # branch a conversation, keep the original
 ```
 
 No tmux. No dashboard. Your terminal tabs are the UI.
-
-→ [agentherder.com](https://agentherder.com)
 
 ---
 
