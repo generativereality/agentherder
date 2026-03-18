@@ -29,8 +29,25 @@ The killer feature: **Claude can run herd itself.** Install the skill and your C
 
 ## Install
 
+**As a Claude Code plugin** (installs the CLI + skill in one step):
+
+```bash
+/plugin marketplace add generativereality/agentherder
+/plugin install herd@agentherder
+```
+
+**Via npm** (CLI only):
+
 ```bash
 npm install -g @generativereality/herd
+```
+
+**Skill only** (if you already have the CLI):
+
+```bash
+mkdir -p .claude/skills/herd
+curl -fsSL https://raw.githubusercontent.com/generativereality/agentherder/main/skills/herd/SKILL.md \
+  -o .claude/skills/herd/SKILL.md
 ```
 
 **Requirements:** [Wave Terminal](https://waveterm.dev) · macOS · Node.js 20+
@@ -104,13 +121,7 @@ herd new api ~/Dev/myapp -w work
 
 ## Claude Code Skill
 
-The real unlock: install the herd skill so **Claude Code can herd itself**.
-
-```bash
-mkdir -p .claude/skills/herd
-curl -fsSL https://raw.githubusercontent.com/generativereality/agentherder/main/.claude/skills/herd/SKILL.md \
-  -o .claude/skills/herd/SKILL.md
-```
+The real unlock: install the plugin (see [Install](#install)) so **Claude Code can herd itself**.
 
 With the skill installed, Claude can:
 
