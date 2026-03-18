@@ -1,17 +1,12 @@
 {
-  "name": "herd",
-  "description": "Agent session manager — run a fleet of Claude Code sessions from the CLI, or let Claude orchestrate its own sibling sessions.",
-  "version": "0.1.0",
+  "name": "agentherder",
+  "description": "Run a fleet of Claude Code sessions. Terminal tabs as the UI, no tmux. Claude can orchestrate its own sibling sessions.",
+  "version": "0.1.1",
   "author": {
     "name": "generativereality",
     "url": "https://agentherder.com"
   },
-  "skills": [
-    {
-      "name": "herd",
-      "path": "skills/herd/SKILL.md"
-    }
-  ],
   "repository": "https://github.com/generativereality/agentherder",
+  "homepage": "https://agentherder.com",
   "license": "MIT"
 }
