@@ -4,6 +4,7 @@ import { randomUUID } from 'crypto'
 import { homedir } from 'os'
 import { join } from 'path'
 import type { Block, Workspace, AllData } from '../types/index.js'
+import { detectTerminal, printUnsupportedTerminalError } from './terminal.js'
 
 const SOCK_PATH = join(
   homedir(),
@@ -318,9 +319,7 @@ export class WaveAdapter {
 
 export function requireWaveAdapter(): WaveAdapter {
   if (!process.env.WAVETERM_JWT) {
-    console.error(
-      'herd requires Wave Terminal (WAVETERM_JWT not set).\nSupport for iTerm2 and other terminals is planned.',
-    )
+    printUnsupportedTerminalError(detectTerminal())
     process.exit(1)
   }
   return new WaveAdapter()
