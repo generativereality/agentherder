@@ -30,7 +30,7 @@ Each session runs in its own terminal tab. `herd` lets you — and other Claude 
 ```bash
 herd sessions                          # list all tabs with session status
 herd list                              # list all workspaces, tabs, and blocks
-herd new <name> [dir] [-w workspace]   # new tab + claude
+herd new <name> [dir] [-w workspace] [-p "prompt"] [-f file]  # new tab + claude
 herd resume <name> [dir]               # new tab + claude --continue
 herd fork <tab-name> [-n new-name]     # fork a session into a new tab
 herd close <name-or-id>                # close a tab
@@ -103,27 +103,24 @@ use `herd resume <name> <dir>` afterwards to open the resulting session in a new
 
 As a Claude Code session, you can spawn a sibling session to work on a parallel task:
 
+**Preferred: pass the initial task directly to `herd new`** using `--prompt` or `--file`. This polls internally until Claude's `❯` prompt appears before sending — no race condition:
+
+```bash
+herd new payments ~/Dev/myapp --prompt "implement the billing endpoint"
+herd new payments ~/Dev/myapp --file /tmp/task.txt
+```
+
+If you need to send a task after the fact, poll first:
+
 ```bash
 herd new payments ~/Dev/myapp
+# Poll until ❯ appears (typically 10-15s with MCP servers)
+herd scrollback payments 5   # repeat until you see ❯
+herd send payments --file /tmp/task.txt
+herd send payments "yes\n"   # quick replies
 ```
 
-**CRITICAL: Wait for Claude to be ready before sending tasks.** After `herd new` returns, Claude is still starting up (loading MCP servers, showing the initial prompt). Sending immediately causes the task to arrive as raw shell commands, not as a Claude prompt.
-
-Poll `herd scrollback` until you see the Claude prompt (the `❯` line with no pending output):
-
-```bash
-# Poll until Claude prompt appears (look for the ❯ prompt line)
-herd scrollback payments 5
-# Repeat every few seconds until you see Claude's prompt — typically 10-15s
-```
-
-Once Claude is ready, send the task:
-
-```bash
-herd send payments --file /tmp/task.txt     # send a prompt from a file
-echo "implement the billing endpoint" | herd send payments   # or via stdin
-herd send payments "yes\n"                  # or inline for quick replies
-```
+**Do NOT call `herd send` immediately after `herd new`** — Claude is still starting up and the text will land as raw shell commands.
 
 ## Workflow: Monitoring Another Session
 
