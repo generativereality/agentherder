@@ -14,7 +14,7 @@ export const closeCommand = define({
     const adapter = requireWaveAdapter()
     const { tabsById, tabNames } = await adapter.getAllData()
     const matches = adapter.resolveTab(query, tabsById, tabNames)
-    if (!matches.length) { consola.error(`No tab matching '${query}'`); process.exit(1) }
+    if (!matches.length) { consola.error(`No tab matching '${query}' (tabs in workspaces with no open window are not visible — open that workspace first)`); process.exit(1) }
     if (matches.length > 1) {
       consola.error(`Multiple tabs match '${query}':`)
       for (const tid of matches) consola.log(`  "${tabNames.get(tid)}"  [${tid.slice(0, 8)}]`)

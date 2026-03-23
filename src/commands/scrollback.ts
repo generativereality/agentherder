@@ -33,7 +33,7 @@ export const scrollbackCommand = define({
       // Fall back to block ID prefix resolution
       const allBlocks = adapter.blocksList()
       const blockMatches = adapter.resolveBlock(query, allBlocks)
-      if (!blockMatches.length) { consola.error(`No tab or block matching '${query}'`); process.exit(1) }
+      if (!blockMatches.length) { consola.error(`No tab or block matching '${query}' (tabs in workspaces with no open window are not visible — open that workspace first)`); process.exit(1) }
       if (blockMatches.length > 1) {
         consola.error(`Multiple blocks match '${query}':`)
         for (const b of blockMatches) consola.log(`  ${b.blockid}`)
