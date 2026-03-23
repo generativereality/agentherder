@@ -4,22 +4,12 @@ The included skill lets Claude Code call `herd` itself — checking what session
 
 ## Install
 
-**Via plugin** (recommended — also installs the CLI):
-
 ```bash
 /plugin marketplace add generativereality/plugins
 /plugin install agentherder@generativereality
 ```
 
-**Manually** (if you installed the CLI via npm):
-
-```bash
-mkdir -p .claude/skills/herd
-curl -fsSL https://raw.githubusercontent.com/generativereality/agentherder/main/skills/herd/SKILL.md \
-  -o .claude/skills/herd/SKILL.md
-```
-
-The skill auto-installs the `herd` CLI via npm if it's not already on your PATH.
+This installs both the `herd` CLI and the skill. Updates are delivered via the plugin — run `/plugin update agentherder` to get the latest.
 
 ## What Claude can do with it
 

@@ -57,12 +57,11 @@ The tab title and Claude session name are in sync from the start.
 
 ## Add the Claude Code skill
 
-If you installed via npm rather than the plugin, add the skill manually:
+Install via the plugin — it keeps the skill up to date automatically:
 
 ```bash
-mkdir -p .claude/skills/herd
-curl -fsSL https://raw.githubusercontent.com/generativereality/agentherder/main/skills/herd/SKILL.md \
-  -o .claude/skills/herd/SKILL.md
+/plugin marketplace add generativereality/plugins
+/plugin install agentherder@generativereality
 ```
 
-Now Claude Code can call `herd sessions`, `herd new`, `herd fork`, and more to orchestrate parallel work.
+This installs both the `herd` CLI and the skill. Claude Code can then call `herd sessions`, `herd new`, `herd fork`, and more to orchestrate parallel work.

@@ -12,6 +12,27 @@ herd new infra ~/Dev/myapp
 
 Each tab is named automatically and the Claude session name is synced to the tab title via `--name`.
 
+## Starting a session with an initial prompt
+
+Use `-p` to send a prompt once Claude is ready, or `-f` to load it from a file:
+
+```bash
+herd new auth ~/Dev/myapp -p "implement JWT refresh token logic"
+herd new api ~/Dev/myapp -f ~/prompts/api-task.txt
+```
+
+herd waits for Claude's prompt to appear before sending, so there's no race condition.
+
+## Working in an isolated branch (worktree)
+
+Use `-W` to launch Claude with `--worktree <name>`, creating an isolated git worktree at `.claude/worktrees/<name>`:
+
+```bash
+herd new auth-experiment ~/Dev/myapp -W
+```
+
+This lets you run parallel sessions on the same repo without branches conflicting.
+
 ## Resuming after a restart
 
 ```bash
