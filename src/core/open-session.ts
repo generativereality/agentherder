@@ -61,6 +61,11 @@ export async function openSession(opts: OpenSessionOptions): Promise<string> {
   const extraFlags = config.claude.flags.join(' ')
   const cmd = `cd ${JSON.stringify(dir)} && ${claudeCmd} --name ${JSON.stringify(tabName)}${extraFlags ? ' ' + extraFlags : ''}\n`
   await adapter.sendInput(blockId, cmd)
+
+  // Wait for Wave to fully process the new tab before returning, so rapid
+  // back-to-back `herd new` calls don't race on waitForNewBlock.
+  await new Promise((r) => setTimeout(r, 2000))
+
   adapter.closeSocket()
 
   return tabId
