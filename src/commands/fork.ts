@@ -1,8 +1,20 @@
 import { define } from 'gunshi'
 import { consola } from 'consola'
+import { join } from 'path'
 import { requireWaveAdapter } from '../core/wave.js'
 import { findLatestSessionId, pathToProjectSlug } from '../core/session.js'
 import { openSession } from '../core/open-session.js'
+
+/** If dir is inside .claude/worktrees/<name>, return the repo root instead */
+function resolveSessionDir(dir: string): { sessionLookupDir: string; openDir: string } {
+  const worktreeMarker = `${join('.claude', 'worktrees')}` + '/'
+  const idx = dir.indexOf(worktreeMarker)
+  if (idx !== -1) {
+    const repoRoot = dir.slice(0, idx - 1) // strip trailing slash + .claude/worktrees/<name>
+    return { sessionLookupDir: repoRoot, openDir: repoRoot }
+  }
+  return { sessionLookupDir: dir, openDir: dir }
+}
 
 export const forkCommand = define({
   name: 'fork',
@@ -33,17 +45,18 @@ export const forkCommand = define({
     const termBlocks = (tabsById.get(tabId) ?? []).filter((b) => b.view === 'term')
     if (!termBlocks.length) { consola.error(`Tab "${tabName}" has no terminal block`); process.exit(1) }
 
-    const sourceDir = termBlocks[0].meta?.['cmd:cwd'] ?? process.cwd()
-    const sessionId = findLatestSessionId(sourceDir)
+    const rawDir = termBlocks[0].meta?.['cmd:cwd'] ?? process.cwd()
+    const { sessionLookupDir, openDir } = resolveSessionDir(rawDir)
+    const sessionId = findLatestSessionId(sessionLookupDir)
     if (!sessionId) {
-      consola.error(`No Claude session found for ${sourceDir}`)
-      consola.info(`Looked in ~/.claude/projects/${pathToProjectSlug(sourceDir)}/`)
+      consola.error(`No Claude session found for ${sessionLookupDir}`)
+      consola.info(`Looked in ~/.claude/projects/${pathToProjectSlug(sessionLookupDir)}/`)
       process.exit(1)
     }
 
     const newTabId = await openSession({
       tabName: newName,
-      dir: sourceDir,
+      dir: openDir,
       claudeCmd: `claude --resume ${sessionId} --fork-session`,
     })
     consola.success(`Forked "${tabName}" → "${newName}" [${newTabId.slice(0, 8)}]`)
