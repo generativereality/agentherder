@@ -1,6 +1,6 @@
 {
-  "name": "@generativereality/herd",
-  "version": "0.1.0",
+  "name": "@generativereality/agentherder",
+  "version": "0.1.2",
   "description": "Agent session manager for AI coding tools. Terminal tabs as the UI, no tmux.",
   "type": "module",
   "bin": {
@@ -31,11 +31,15 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/generativereality/agentherder"
+    "url": "git+https://github.com/generativereality/agentherder.git"
   },
   "homepage": "https://agentherder.com",
   "engines": {
     "node": ">=20.19.4"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   },
   "dependencies": {
     "@clack/prompts": "^0.9.1",

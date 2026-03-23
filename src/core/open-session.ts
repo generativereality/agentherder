@@ -1,4 +1,5 @@
 import { resolve } from 'path'
+import { existsSync } from 'fs'
 import { homedir } from 'os'
 import { consola } from 'consola'
 import { loadConfig } from './config.js'
@@ -14,6 +15,12 @@ interface OpenSessionOptions {
 export async function openSession(opts: OpenSessionOptions): Promise<string> {
   const { tabName, claudeCmd, workspaceQuery } = opts
   const dir = resolve(opts.dir.replace(/^~/, homedir()))
+
+  if (!existsSync(dir)) {
+    consola.error(`Directory does not exist: ${dir}`)
+    process.exit(1)
+  }
+
   const config = loadConfig()
 
   const adapter = requireWaveAdapter()

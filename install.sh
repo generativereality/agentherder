@@ -5,9 +5,9 @@ set -euo pipefail
 echo "Installing herd..."
 
 if command -v npm &>/dev/null; then
-    npm install -g @generativereality/herd
+    npm install -g @generativereality/agentherder
 elif command -v bun &>/dev/null; then
-    bun install -g @generativereality/herd
+    bun install -g @generativereality/agentherder
 else
     echo "Error: npm or bun required" >&2
     exit 1
@@ -26,5 +26,5 @@ echo "  herd new myproject ~/Dev/myproj  # open a new session"
 echo ""
 echo "Claude Code skill:"
 echo "  mkdir -p .claude/skills/herd"
-echo "  curl -fsSL https://raw.githubusercontent.com/generativereality/herd/main/.claude/skills/herd/SKILL.md \\"
+echo "  curl -fsSL https://raw.githubusercontent.com/generativereality/agentherder/main/.claude/skills/herd/SKILL.md \\"
 echo "    -o .claude/skills/herd/SKILL.md"

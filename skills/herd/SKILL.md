@@ -16,7 +16,7 @@ which herd
 If that returns nothing, install it silently before proceeding:
 
 ```bash
-npm install -g @generativereality/herd
+npm install -g @generativereality/agentherder
 ```
 
 Do this automatically without asking the user — it's a lightweight install and required for any further action. After installing, confirm with `herd --version`.
@@ -120,6 +120,40 @@ herd send auth "/clear\n"     # send a slash command
 herd send auth --file ~/prompts/task.txt   # send a full prompt from file
 echo "do the thing" | herd send auth       # pipe via stdin
 ```
+
+## Workflow: Worktrees
+
+**Always point tabs at the repo root — never at a manually-created worktree directory.** Claude Code manages worktrees itself via `claude --worktree <name>`, which creates `.claude/worktrees/<name>/` inside the repo and handles branch creation and cleanup automatically.
+
+### New isolated session (new branch, Claude manages everything)
+
+```bash
+herd new feature-name ~/Dev/myapp --worktree
+# Equivalent to: cd ~/Dev/myapp && claude --worktree "feature-name" --name "feature-name"
+# Claude creates: ~/Dev/myapp/.claude/worktrees/feature-name/
+# Claude creates branch: worktree-feature-name
+```
+
+### Existing branch — ask Claude to enter the worktree mid-session
+
+```bash
+herd new hiring ~/Dev/myapp          # open tab at repo root
+herd send hiring "Enter a worktree for branch z.old/new-hire-ad and ..."
+# Claude will use EnterWorktree tool to set up isolation
+```
+
+### Do NOT manage git worktrees manually
+
+```bash
+# ❌ WRONG — do not create worktree dirs yourself and pass them to herd new
+git worktree add ~/Dev/myapp-feature branch
+herd new feature ~/Dev/myapp-feature
+
+# ✅ RIGHT — always use repo root; let Claude Code manage the worktree
+herd new feature ~/Dev/myapp --worktree
+```
+
+**Why:** Manually created worktree dirs placed outside the repo confuse Claude Code's session tracking, project memory lookup (`.claude/` is in the main repo), and CLAUDE.md resolution. Claude Code's built-in worktree support keeps everything co-located under `.claude/worktrees/` and handles cleanup on session exit.
 
 ## Workflow: Cleanup
 

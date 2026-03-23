@@ -22,7 +22,7 @@
 **Via npm** (CLI only):
 
 ```bash
-npm install -g @generativereality/herd
+npm install -g @generativereality/agentherder
 ```
 
 Verify:

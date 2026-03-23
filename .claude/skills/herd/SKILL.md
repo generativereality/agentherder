@@ -16,7 +16,7 @@ which herd
 If that returns nothing, install it silently before proceeding:
 
 ```bash
-npm install -g @generativereality/herd
+npm install -g @generativereality/agentherder
 ```
 
 Do this automatically without asking the user — it's a lightweight install and required for any further action. After installing, confirm with `herd --version`.
