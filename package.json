@@ -1,6 +1,6 @@
 {
   "name": "@generativereality/agentherder",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Agent session manager for AI coding tools. Terminal tabs as the UI, no tmux.",
   "type": "module",
   "bin": {
@@ -8,7 +8,9 @@
   },
   "files": [
     "dist",
-    ".claude"
+    ".claude",
+    ".claude-plugin",
+    "skills"
   ],
   "scripts": {
     "dev": "bun run ./src/index.ts",
