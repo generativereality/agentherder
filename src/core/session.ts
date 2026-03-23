@@ -53,7 +53,41 @@ export function findLatestSessionId(dir: string): string | null {
   return null
 }
 
-/** Return the directory hint for the session lookup (for error messages) */
-export function pathToProjectSlugHint(dir: string): string {
-  return pathToProjectSlug(dir)
+/**
+ * Find the most recently created session ID after a given timestamp.
+ * Used by `herd fork` to detect the session Claude created in response to /branch.
+ */
+export function findNewestSessionIdSince(
+  dir: string,
+  sinceMs: number,
+): string | null {
+  const projectsRoot = join(homedir(), '.claude', 'projects')
+
+  const candidates: Array<{ id: string; mtime: number }> = []
+
+  function scanProjectDir(projectDir: string) {
+    if (!existsSync(projectDir)) return
+    for (const f of readdirSync(projectDir)) {
+      if (extname(f) !== '.jsonl') continue
+      const mtime = statSync(join(projectDir, f)).mtimeMs
+      if (mtime > sinceMs) {
+        candidates.push({ id: basename(f, '.jsonl'), mtime })
+      }
+    }
+  }
+
+  // Scan direct project dir
+  scanProjectDir(join(projectsRoot, pathToProjectSlug(dir)))
+
+  // Scan worktrees under dir
+  const worktreesDir = join(dir, '.claude', 'worktrees')
+  if (existsSync(worktreesDir)) {
+    for (const entry of readdirSync(worktreesDir)) {
+      scanProjectDir(join(projectsRoot, pathToProjectSlug(join(worktreesDir, entry))))
+    }
+  }
+
+  if (!candidates.length) return null
+  candidates.sort((a, b) => b.mtime - a.mtime)
+  return candidates[0].id
 }
