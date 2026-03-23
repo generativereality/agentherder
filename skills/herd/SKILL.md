@@ -105,6 +105,21 @@ As a Claude Code session, you can spawn a sibling session to work on a parallel 
 
 ```bash
 herd new payments ~/Dev/myapp
+```
+
+**CRITICAL: Wait for Claude to be ready before sending tasks.** After `herd new` returns, Claude is still starting up (loading MCP servers, showing the initial prompt). Sending immediately causes the task to arrive as raw shell commands, not as a Claude prompt.
+
+Poll `herd scrollback` until you see the Claude prompt (the `❯` line with no pending output):
+
+```bash
+# Poll until Claude prompt appears (look for the ❯ prompt line)
+herd scrollback payments 5
+# Repeat every few seconds until you see Claude's prompt — typically 10-15s
+```
+
+Once Claude is ready, send the task:
+
+```bash
 herd send payments --file /tmp/task.txt     # send a prompt from a file
 echo "implement the billing endpoint" | herd send payments   # or via stdin
 herd send payments "yes\n"                  # or inline for quick replies
