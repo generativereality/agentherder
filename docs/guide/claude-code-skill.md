@@ -4,10 +4,20 @@ The included skill lets Claude Code call `herd` itself — checking what session
 
 ## Install
 
-```bash
-/plugin marketplace add generativereality/plugins
-/plugin install agentherder@generativereality
+Run these slash commands inside a [Claude Code](https://claude.ai/code) session:
+
 ```
+❯ /plugin marketplace add generativereality/plugins
+  ⎿  Successfully added marketplace: generativereality
+
+❯ /plugin install agentherder@generativereality
+  ⎿  ✓ Installed agentherder. Run /reload-plugins to activate.
+
+❯ /reload-plugins
+  ⎿  Reloaded: 1 plugin · 0 skills · 5 agents · 0 hooks · 0 plugin MCP servers · 0 plugin LSP servers
+```
+
+> **Note:** These are Claude Code slash commands, not shell commands. Type them at the `❯` prompt inside a Claude Code session.
 
 This installs both the `herd` CLI and the skill. Updates are delivered via the plugin — run `/plugin update agentherder` to get the latest.
 

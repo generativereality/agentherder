@@ -29,20 +29,30 @@ The killer feature: **Claude can run herd itself.** Install the skill and your C
 
 ## Install
 
-**As a Claude Code plugin** (installs the CLI + skill in one step):
+**As a Claude Code plugin** (recommended — installs the CLI + skill in one step):
 
-```bash
-/plugin marketplace add generativereality/plugins
-/plugin install agentherder@generativereality
+Run these slash commands inside a [Claude Code](https://claude.ai/code) session:
+
+```
+❯ /plugin marketplace add generativereality/plugins
+  ⎿  Successfully added marketplace: generativereality
+
+❯ /plugin install agentherder@generativereality
+  ⎿  ✓ Installed agentherder. Run /reload-plugins to activate.
+
+❯ /reload-plugins
+  ⎿  Reloaded: 1 plugin · 0 skills · 5 agents · 0 hooks · 0 plugin MCP servers · 0 plugin LSP servers
 ```
 
-**Via npm** (CLI only):
+> **Note:** These are Claude Code slash commands, not shell commands. Type them at the `❯` prompt inside a Claude Code session.
+
+**Via npm** (CLI only, no Claude Code skill):
 
 ```bash
 npm install -g @generativereality/agentherder
 ```
 
-**Skill only** (if you already have the CLI):
+**Skill only** (if you already have the CLI installed via npm):
 
 ```bash
 mkdir -p .claude/skills/herd

@@ -12,14 +12,26 @@
 
 ## Install
 
-**As a Claude Code plugin** (installs the CLI + skill in one step):
+### As a Claude Code plugin (recommended)
 
-```bash
-/plugin marketplace add generativereality/plugins
-/plugin install agentherder@generativereality
+The plugin installs both the `herd` CLI and the Claude Code skill in one step. Run these slash commands inside a [Claude Code](https://claude.ai/code) session:
+
+```
+❯ /plugin marketplace add generativereality/plugins
+  ⎿  Successfully added marketplace: generativereality
+
+❯ /plugin install agentherder@generativereality
+  ⎿  ✓ Installed agentherder. Run /reload-plugins to activate.
+
+❯ /reload-plugins
+  ⎿  Reloaded: 1 plugin · 0 skills · 5 agents · 0 hooks · 0 plugin MCP servers · 0 plugin LSP servers
 ```
 
-**Via npm** (CLI only):
+> **Note:** These are Claude Code slash commands, not shell commands. Type them at the `❯` prompt inside a Claude Code session.
+
+### Via npm (CLI only)
+
+This installs the `herd` CLI but does **not** include the Claude Code skill:
 
 ```bash
 npm install -g @generativereality/agentherder
@@ -57,11 +69,14 @@ The tab title and Claude session name are in sync from the start.
 
 ## Add the Claude Code skill
 
-Install via the plugin — it keeps the skill up to date automatically:
+If you installed via the plugin method above, the skill is already included — no extra steps needed.
+
+If you installed via npm and want to add the skill separately:
 
 ```bash
-/plugin marketplace add generativereality/plugins
-/plugin install agentherder@generativereality
+mkdir -p .claude/skills/herd
+curl -fsSL https://raw.githubusercontent.com/generativereality/agentherder/main/skills/herd/SKILL.md \
+  -o .claude/skills/herd/SKILL.md
 ```
 
-This installs both the `herd` CLI and the skill. Claude Code can then call `herd sessions`, `herd new`, `herd fork`, and more to orchestrate parallel work.
+With the skill installed, Claude Code can call `herd sessions`, `herd new`, `herd fork`, and more to orchestrate parallel work autonomously.
