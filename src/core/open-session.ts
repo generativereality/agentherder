@@ -14,21 +14,26 @@ interface OpenSessionOptions {
   initialPromptFile?: string
 }
 
-/** Poll scrollback until Claude's ❯ prompt is visible, then return */
-async function waitForClaudePrompt(adapter: ReturnType<typeof requireWaveAdapter>, blockId: string, timeoutMs = 30_000): Promise<void> {
-  const POLL_INTERVAL = 1000
+/** Poll scrollback until a pattern is visible, then return. Rejects on timeout. */
+async function waitForScrollbackMatch(
+  adapter: ReturnType<typeof requireWaveAdapter>,
+  blockId: string,
+  pattern: string,
+  label: string,
+  timeoutMs: number,
+  pollInterval = 1000,
+): Promise<void> {
   const deadline = Date.now() + timeoutMs
   while (Date.now() < deadline) {
-    await new Promise((r) => setTimeout(r, POLL_INTERVAL))
+    await new Promise((r) => setTimeout(r, pollInterval))
     try {
       const lines = adapter.scrollback(blockId, 10)
-      // Claude's ready prompt contains the ❯ character
-      if (lines && lines.includes('❯')) return
+      if (lines && lines.includes(pattern)) return
     } catch {
       // scrollback not yet available — keep polling
     }
   }
-  consola.warn('Timed out waiting for Claude prompt — sending task anyway')
+  throw new Error(`Timed out waiting for ${label}`)
 }
 
 export async function openSession(opts: OpenSessionOptions): Promise<string> {
@@ -77,13 +82,28 @@ export async function openSession(opts: OpenSessionOptions): Promise<string> {
   const { blockId, tabId } = result
   await adapter.renameTab(tabId, tabName)
 
+  // Wait for the shell prompt before sending the cd && claude command.
+  // Without this, the input can arrive before the shell is ready and get lost.
+  try {
+    await waitForScrollbackMatch(adapter, blockId, '$', 'shell prompt', 10_000, 250)
+  } catch {
+    consola.error('Shell prompt never appeared in new tab — aborting. Check your shell profile (e.g. nvm default alias).')
+    process.exit(1)
+  }
+
   const extraFlags = config.claude.flags.join(' ')
   const cmd = `cd ${JSON.stringify(dir)} && ${claudeCmd} --name ${JSON.stringify(tabName)}${extraFlags ? ' ' + extraFlags : ''}\n`
   await adapter.sendInput(blockId, cmd)
 
   if (initialPromptFile) {
     // Poll until Claude's ready prompt appears, then send the initial task
-    await waitForClaudePrompt(adapter, blockId)
+    try {
+      await waitForScrollbackMatch(adapter, blockId, '❯', 'Claude prompt', 30_000)
+    } catch {
+      consola.error('Claude prompt (❯) never appeared — not sending initial prompt. Check that claude started successfully.')
+      adapter.closeSocket()
+      process.exit(1)
+    }
     const prompt = readFileSync(initialPromptFile, 'utf-8')
     const text = prompt.endsWith('\n') ? prompt : prompt + '\n'
     await adapter.sendInput(blockId, text)
