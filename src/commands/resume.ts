@@ -4,10 +4,11 @@ import { define } from 'gunshi'
 import { consola } from 'consola'
 import { loadConfig } from '../core/config.js'
 import { requireWaveAdapter } from '../core/wave.js'
+import { findLatestSessionId, pathToProjectSlug } from '../core/session.js'
 
 export const resumeCommand = define({
   name: 'resume',
-  description: 'Resume claude in an existing terminal tab',
+  description: 'Resume claude in an existing terminal tab using the latest session ID',
   args: {
     name: { type: 'positional', description: 'Tab name' },
     dir: { type: 'positional', description: 'Working directory (default: cwd)' },
@@ -41,12 +42,19 @@ export const resumeCommand = define({
       process.exit(1)
     }
 
+    const sessionId = findLatestSessionId(dir)
+    if (!sessionId) {
+      consola.error(`No Claude session found for ${dir}`)
+      consola.info(`Looked in ~/.claude/projects/${pathToProjectSlug(dir)}/`)
+      process.exit(1)
+    }
+
     const config = loadConfig()
     const extraFlags = config.claude.flags.join(' ')
-    const cmd = `cd ${JSON.stringify(dir)} && claude --continue --name ${JSON.stringify(name)}${extraFlags ? ' ' + extraFlags : ''}\n`
+    const cmd = `cd ${JSON.stringify(dir)} && claude --resume ${sessionId} --name ${JSON.stringify(name)}${extraFlags ? ' ' + extraFlags : ''}\n`
     await adapter.sendInput(termBlock.blockid, cmd)
 
     adapter.closeSocket()
-    consola.success(`Tab "${name}" [${tabId.slice(0, 8)}] → claude --continue at ${dir}`)
+    consola.success(`Tab "${name}" [${tabId.slice(0, 8)}] → claude --resume ${sessionId.slice(0, 8)}… at ${dir}`)
   },
 })
