@@ -18,7 +18,7 @@ interface OpenSessionOptions {
 async function waitForScrollbackMatch(
   adapter: ReturnType<typeof requireWaveAdapter>,
   blockId: string,
-  pattern: string,
+  pattern: string | RegExp,
   label: string,
   timeoutMs: number,
   pollInterval = 1000,
@@ -28,7 +28,11 @@ async function waitForScrollbackMatch(
     await new Promise((r) => setTimeout(r, pollInterval))
     try {
       const lines = adapter.scrollback(blockId, 10)
-      if (lines && lines.includes(pattern)) return
+      if (!lines) continue
+      const match = typeof pattern === 'string'
+        ? lines.includes(pattern)
+        : pattern.test(lines)
+      if (match) return
     } catch {
       // scrollback not yet available — keep polling
     }
@@ -84,8 +88,9 @@ export async function openSession(opts: OpenSessionOptions): Promise<string> {
 
   // Wait for the shell prompt before sending the cd && claude command.
   // Without this, the input can arrive before the shell is ready and get lost.
+  // Match common prompt endings: bash ($), zsh (%), fish/other (>)
   try {
-    await waitForScrollbackMatch(adapter, blockId, '$', 'shell prompt', 10_000, 250)
+    await waitForScrollbackMatch(adapter, blockId, /[$%>]\s*$/, 'shell prompt', 10_000, 250)
   } catch {
     consola.error('Shell prompt never appeared in new tab — aborting. Check your shell profile (e.g. nvm default alias).')
     process.exit(1)
