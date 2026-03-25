@@ -30,7 +30,7 @@ export const sendCommand = define({
     // Resolve text source: inline arg > --file > stdin
     let rawText: string
     if (inlineText !== undefined) {
-      rawText = inlineText.replace(/\\n/g, '\r').replace(/\\t/g, '\t')
+      rawText = inlineText.replace(/\\n/g, '\r').replace(/\\r/g, '\r').replace(/\\t/g, '\t')
     } else if (filePath) {
       rawText = readFileSync(filePath, 'utf-8').replace(/\n/g, '\r')
     } else {

@@ -3,9 +3,9 @@ import { homedir } from 'os'
 import { join, basename, extname } from 'path'
 import { resolve } from 'path'
 
-/** Convert an absolute path to Claude's project slug (/ → -) */
+/** Convert an absolute path to Claude's project slug (/ and . → -) */
 export function pathToProjectSlug(dir: string): string {
-  return resolve(dir).replace(/\//g, '-')
+  return resolve(dir).replace(/[/.]/g, '-')
 }
 
 /** Find the most recent .jsonl session file in a Claude project directory */

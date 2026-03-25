@@ -10,11 +10,11 @@ You are managing Claude Code sessions using the `herd` CLI (Agent Herder).
 Run all herd commands via `npx`:
 
 ```bash
-npx @generativereality/agentherder sessions
-npx @generativereality/agentherder new <name> <dir>
+npx @generativereality/agentherder@latest sessions
+npx @generativereality/agentherder@latest new <name> <dir>
 ```
 
-If `herd` is already on PATH (check with `which herd`), you can use `herd` directly instead of `npx @generativereality/agentherder`.
+If `herd` is already on PATH (check with `which herd`), you can use `herd` directly instead of `npx @generativereality/agentherder@latest`.
 
 Do NOT attempt to install herd globally, modify PATH, or fix npm configuration. Just use `npx`.
 
