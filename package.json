@@ -18,7 +18,8 @@
     "lint": "eslint src/",
     "check": "bun run typecheck && bun run build",
     "release": "bumpp && npm publish",
-    "prepack": "bun run build"
+    "sync-plugin": "bash scripts/sync-plugin.sh",
+    "prepack": "bash scripts/sync-plugin.sh --check && bun run build"
   },
   "keywords": [
     "claude-code",
