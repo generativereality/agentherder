@@ -97,7 +97,7 @@ export async function openSession(opts: OpenSessionOptions): Promise<string> {
   }
 
   const extraFlags = config.claude.flags.join(' ')
-  const cmd = `cd ${JSON.stringify(dir)} && ${claudeCmd} --name ${JSON.stringify(tabName)}${extraFlags ? ' ' + extraFlags : ''}\n`
+  const cmd = `cd ${JSON.stringify(dir)} && ${claudeCmd} --name ${JSON.stringify(tabName)}${extraFlags ? ' ' + extraFlags : ''}\r`
   await adapter.sendInput(blockId, cmd)
 
   if (initialPromptFile) {
@@ -109,8 +109,8 @@ export async function openSession(opts: OpenSessionOptions): Promise<string> {
       adapter.closeSocket()
       process.exit(1)
     }
-    const prompt = readFileSync(initialPromptFile, 'utf-8')
-    const text = prompt.endsWith('\n') ? prompt : prompt + '\n'
+    const prompt = readFileSync(initialPromptFile, 'utf-8').replace(/\n/g, '\r')
+    const text = prompt.endsWith('\r') ? prompt : prompt + '\r'
     await adapter.sendInput(blockId, text)
   }
 

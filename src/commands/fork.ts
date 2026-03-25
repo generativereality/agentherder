@@ -52,7 +52,7 @@ export const forkCommand = define({
     // Send /branch to the source tab — Claude will fork the conversation and write a new session file
     consola.info(`Sending /branch to "${tabName}"…`)
     const before = Date.now()
-    await adapter.sendInput(sourceBlockId, '/branch\n')
+    await adapter.sendInput(sourceBlockId, '/branch\r')
     adapter.closeSocket()
 
     // Poll for the new session file (up to 10s)

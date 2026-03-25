@@ -30,14 +30,14 @@ export const sendCommand = define({
     // Resolve text source: inline arg > --file > stdin
     let rawText: string
     if (inlineText !== undefined) {
-      rawText = inlineText.replace(/\\n/g, '\n').replace(/\\t/g, '\t')
+      rawText = inlineText.replace(/\\n/g, '\r').replace(/\\t/g, '\t')
     } else if (filePath) {
-      rawText = readFileSync(filePath, 'utf-8')
+      rawText = readFileSync(filePath, 'utf-8').replace(/\n/g, '\r')
     } else {
-      rawText = await readStdin()
+      rawText = (await readStdin()).replace(/\n/g, '\r')
     }
 
-    if (appendEnter && !rawText.endsWith('\n')) rawText += '\n'
+    if (appendEnter && !rawText.endsWith('\r')) rawText += '\r'
 
     const adapter = requireWaveAdapter()
     const { tabsById, tabNames } = await adapter.getAllData()
