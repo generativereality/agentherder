@@ -51,7 +51,7 @@ export const resumeCommand = define({
 
     const config = loadConfig()
     const extraFlags = config.claude.flags.join(' ')
-    const cmd = `cd ${JSON.stringify(dir)} && claude --resume ${sessionId} --name ${JSON.stringify(name)}${extraFlags ? ' ' + extraFlags : ''}\r`
+    const cmd = `cd ${JSON.stringify(dir)} && claude${extraFlags ? ' ' + extraFlags : ''} --resume ${sessionId} --name ${JSON.stringify(name)}\r`
     await adapter.sendInput(termBlock.blockid, cmd)
 
     adapter.closeSocket()
