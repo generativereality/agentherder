@@ -1,3 +1,8 @@
+---
+title: Getting Started — Agent Herder
+description: Install Agent Herder as a Claude Code plugin or via npm, then open your first multi-session terminal workflow in under a minute.
+---
+
 # Getting Started
 
 ## Prerequisites

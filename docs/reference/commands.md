@@ -1,3 +1,8 @@
+---
+title: Command Reference — Agent Herder
+description: Complete reference for all herd CLI commands — sessions, new, resume, fork, close, rename, scrollback, send, and config.
+---
+
 # Commands
 
 ## herd (default)

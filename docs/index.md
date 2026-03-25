@@ -1,5 +1,7 @@
 ---
 layout: home
+title: Agent Herder — Run a Fleet of Claude Code Sessions
+description: Session manager for AI coding tools. Terminal tabs as the UI, no tmux. Open, fork, inspect, and close Claude Code sessions from a single CLI.
 
 hero:
   name: Agent Herder

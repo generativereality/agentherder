@@ -1,3 +1,8 @@
+---
+title: Session Workflows — Agent Herder
+description: Open session batches, fork conversations, resume after restarts, send input remotely, and read scrollback across Claude Code sessions.
+---
+
 # Session Workflows
 
 ## Opening a session batch

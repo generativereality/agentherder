@@ -1,6 +1,11 @@
-# What is herd?
+---
+title: What is Agent Herder? — Agent Herder
+description: Agent Herder is a session manager for Claude Code that uses native terminal tabs instead of tmux. Learn how it compares to claude-squad, ccmanager, and agent-deck.
+---
 
-herd is a session manager for AI coding tools — primarily Claude Code. It lets you open, resume, fork, inspect, and close terminal sessions from a single CLI, without tmux.
+# What is Agent Herder?
+
+Agent Herder (`herd`) is a session manager for AI coding tools — primarily Claude Code. It lets you open, resume, fork, inspect, and close terminal sessions from a single CLI, without tmux.
 
 ## The problem
 

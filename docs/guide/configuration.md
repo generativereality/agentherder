@@ -1,3 +1,8 @@
+---
+title: Configuration — Agent Herder
+description: Configure herd with ~/.config/herd/config.toml. Set default Claude Code flags, workspace targets, and per-session options.
+---
+
 # Configuration
 
 Config file: `~/.config/herd/config.toml`

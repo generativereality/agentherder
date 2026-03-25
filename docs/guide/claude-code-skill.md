@@ -1,3 +1,8 @@
+---
+title: Claude Code Skill — Agent Herder
+description: Let Claude Code orchestrate parallel sessions autonomously using the built-in herd skill. Spawn, fork, monitor, and send input across tabs.
+---
+
 # Claude Code Skill
 
 The included skill lets Claude Code call `herd` itself — checking what sessions are running, spawning parallel agents, forking conversations, and sending input to coordinate across tabs.
