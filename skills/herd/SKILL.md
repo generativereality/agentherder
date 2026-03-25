@@ -79,19 +79,15 @@ herd resume api ~/Dev/myapp
 ## Workflow: Forking a Session
 
 Use `fork` when you want to explore an alternative approach without disrupting the original.
-`herd fork` sends `/branch` to the source tab (Claude's built-in conversation fork command),
-waits for the new session to be written, then opens it in a new tab.
+`herd fork` finds the latest session ID for the source tab and opens a new tab with
+`claude --resume <id> --fork-session`. The source tab is not modified.
 
 ```bash
 herd fork auth                    # creates "auth-fork" tab
 herd fork auth -n "auth-v2"       # creates "auth-v2" tab
 ```
 
-The forked session shares full conversation history up to the branch point, then diverges independently.
-If Claude does not respond to `/branch` in time, herd falls back to `claude --resume <id> --fork-session`.
-
-**In-session equivalent**: typing `/branch` (alias `/fork`) directly in Claude produces the same fork —
-use `herd resume <name> <dir>` afterwards to open the resulting session in a new tab.
+The forked session shares full conversation history up to the fork point, then diverges independently.
 
 ## Workflow: Spawning a Parallel Agent
 

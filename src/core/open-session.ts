@@ -109,9 +109,11 @@ export async function openSession(opts: OpenSessionOptions): Promise<string> {
       adapter.closeSocket()
       process.exit(1)
     }
-    const prompt = readFileSync(initialPromptFile, 'utf-8').replace(/\n/g, '\r')
-    const text = prompt.endsWith('\r') ? prompt : prompt + '\r'
-    await adapter.sendInput(blockId, text)
+    const prompt = readFileSync(initialPromptFile, 'utf-8').trimEnd()
+    await adapter.sendInput(blockId, prompt)
+    // Send Enter separately — bracketed paste mode swallows \r inside the paste
+    await new Promise((r) => setTimeout(r, 100))
+    await adapter.sendInput(blockId, '\r')
   }
 
   // Wait for Wave to fully process the new tab before returning, so rapid

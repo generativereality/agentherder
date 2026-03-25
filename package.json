@@ -1,6 +1,6 @@
 {
   "name": "@generativereality/agentherder",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Agent session manager for AI coding tools. Terminal tabs as the UI, no tmux.",
   "type": "module",
   "bin": {

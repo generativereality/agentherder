@@ -2,7 +2,7 @@ import { define } from 'gunshi'
 import { consola } from 'consola'
 import { join } from 'path'
 import { requireWaveAdapter } from '../core/wave.js'
-import { findLatestSessionId, findNewestSessionIdSince, pathToProjectSlug } from '../core/session.js'
+import { findLatestSessionId, pathToProjectSlug } from '../core/session.js'
 import { openSession } from '../core/open-session.js'
 
 /** If dir is inside .claude/worktrees/<name>, return the repo root instead */
@@ -18,7 +18,7 @@ function resolveSessionDir(dir: string): { sessionLookupDir: string; openDir: st
 
 export const forkCommand = define({
   name: 'fork',
-  description: 'Fork a session into a new tab by sending /branch to the source tab',
+  description: 'Fork a session into a new tab via --resume <id> --fork-session',
   args: {
     tab: { type: 'positional', description: 'Source tab name or ID prefix' },
     name: { type: 'string', short: 'n', description: 'Name for the new tab' },
@@ -47,49 +47,20 @@ export const forkCommand = define({
 
     const rawDir = termBlocks[0].meta?.['cmd:cwd'] ?? process.cwd()
     const { sessionLookupDir, openDir } = resolveSessionDir(rawDir)
-    const sourceBlockId = termBlocks[0].blockid
 
-    // Send /branch to the source tab — Claude will fork the conversation and write a new session file
-    consola.info(`Sending /branch to "${tabName}"…`)
-    const before = Date.now()
-    await adapter.sendInput(sourceBlockId, '/branch\r')
-    adapter.closeSocket()
-
-    // Poll for the new session file (up to 10s)
-    const POLL_INTERVAL = 500
-    const TIMEOUT = 10_000
-    let newSessionId: string | null = null
-    const deadline = Date.now() + TIMEOUT
-    while (Date.now() < deadline) {
-      await new Promise((r) => setTimeout(r, POLL_INTERVAL))
-      newSessionId = findNewestSessionIdSince(sessionLookupDir, before)
-      if (newSessionId) break
-    }
-
-    if (!newSessionId) {
-      // Fallback: use --fork-session with the existing latest session
-      consola.warn('No new session detected after /branch — falling back to --fork-session')
-      const fallbackId = findLatestSessionId(sessionLookupDir)
-      if (!fallbackId) {
-        consola.error(`No Claude session found for ${sessionLookupDir}`)
-        consola.info(`Looked in ~/.claude/projects/${pathToProjectSlug(sessionLookupDir)}/`)
-        process.exit(1)
-      }
-      const newTabId = await openSession({
-        tabName: newName,
-        dir: openDir,
-        claudeCmd: `claude --resume ${fallbackId} --fork-session`,
-      })
-      consola.success(`Forked "${tabName}" → "${newName}" [${newTabId.slice(0, 8)}] (via --fork-session)`)
-      return
+    const sessionId = findLatestSessionId(sessionLookupDir)
+    if (!sessionId) {
+      consola.error(`No Claude session found for ${sessionLookupDir}`)
+      consola.info(`Looked in ~/.claude/projects/${pathToProjectSlug(sessionLookupDir)}/`)
+      process.exit(1)
     }
 
     const newTabId = await openSession({
       tabName: newName,
       dir: openDir,
-      claudeCmd: `claude --resume ${newSessionId}`,
+      claudeCmd: `claude --resume ${sessionId} --fork-session`,
     })
     consola.success(`Forked "${tabName}" → "${newName}" [${newTabId.slice(0, 8)}]`)
-    consola.info(`session: ${newSessionId}`)
+    consola.info(`session: ${sessionId}`)
   },
 })
