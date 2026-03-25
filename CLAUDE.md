@@ -11,15 +11,14 @@ Agent session manager for AI coding tools. Terminal tabs as the UI, no tmux.
    npm publish --registry https://registry.npmjs.org --//registry.npmjs.org/:_authToken=<token>
    ```
 4. Commit and push this repo
-5. In `generativereality/plugins`: bump `plugins/agentherder/.claude-plugin/plugin.json` to match, **and sync `plugins/agentherder/skills/herd/SKILL.md`** if the skill changed, commit and push
-6. Users update via Claude Code: `/plugins` → Marketplaces → Update generativereality → update agentherder plugin
+5. Users update via Claude Code: `/plugins` → Marketplaces → Update generativereality → update agentherder plugin
 
-**Important:** Claude Code loads skills from the marketplace repo, NOT from the npm package. The `skills/` directory must exist in both this repo and `generativereality/plugins`.
+The `generativereality/plugins` marketplace uses npm source — it points to `@generativereality/agentherder` on npm. Skills, plugin.json, and version are all read from the npm package. No need to update the plugins repo on each release.
 
 ## Key files
 
 - `src/index.ts` — CLI entry point
 - `src/commands/` — subcommands (`new`, `fork`, `close`, `send`, etc.)
 - `src/core/` — core logic (session management, Wave Terminal adapter)
-- `skills/herd/SKILL.md` — Claude Code skill (must be synced to `generativereality/plugins`)
+- `skills/herd/SKILL.md` — Claude Code skill (bundled into npm package)
 - `.claude-plugin/plugin.json` — plugin manifest (version must match `package.json`)
