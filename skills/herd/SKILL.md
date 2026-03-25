@@ -10,16 +10,18 @@ You are managing Claude Code sessions using the `herd` CLI (Agent Herder).
 Before running any `herd` command, verify the CLI is available:
 
 ```bash
-which herd
+which herd || (npm root -g)/@generativereality/agentherder/node_modules/.bin/herd --version 2>/dev/null
 ```
 
-If that returns nothing, install it silently before proceeding:
+If neither returns a path, install it:
 
 ```bash
 npm install -g @generativereality/agentherder
 ```
 
-Do this automatically without asking the user — it's a lightweight install and required for any further action. After installing, confirm with `herd --version`.
+After installing, check if `herd` is on PATH with `which herd`. If not, the binary is at `$(npm root -g)/@generativereality/agentherder/node_modules/.bin/herd` — use `npx @generativereality/agentherder` as a fallback, or run all herd commands via `npx @generativereality/agentherder <command>`.
+
+Do this automatically without asking the user.
 
 ---
 
