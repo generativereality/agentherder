@@ -5,26 +5,18 @@ import { consola } from 'consola'
 import { loadConfig } from '../core/config.js'
 import { requireWaveAdapter } from '../core/wave.js'
 import { openSession } from '../core/open-session.js'
-import { findLatestSessionId, pathToProjectSlug } from '../core/session.js'
 
 export const resumeCommand = define({
   name: 'resume',
-  description: 'Resume a claude session — reuses existing tab or creates a new one',
+  description: 'Resume a claude session by name — reuses existing tab or creates a new one',
   args: {
-    name: { type: 'positional', description: 'Tab name' },
+    name: { type: 'positional', description: 'Tab / session name' },
     dir: { type: 'positional', description: 'Working directory (default: cwd)' },
   },
   async run(ctx) {
     const name = ctx.positionals[1]
     const dir = resolve((ctx.positionals[2] ?? process.cwd()).replace(/^~/, homedir()))
     if (!name) { consola.error('Tab name is required'); process.exit(1) }
-
-    const sessionId = findLatestSessionId(dir)
-    if (!sessionId) {
-      consola.error(`No Claude session found for ${dir}`)
-      consola.info(`Looked in ~/.claude/projects/${pathToProjectSlug(dir)}/`)
-      process.exit(1)
-    }
 
     const adapter = requireWaveAdapter()
     const { tabsById, tabNames } = await adapter.getAllData()
@@ -38,6 +30,9 @@ export const resumeCommand = define({
       process.exit(1)
     }
 
+    // claude --resume accepts a session name (matches --name used at creation)
+    const claudeCmd = `claude --resume ${JSON.stringify(name)}`
+
     if (matchingTabs.length === 1) {
       // Reuse existing tab
       const tabId = matchingTabs[0]
@@ -50,19 +45,19 @@ export const resumeCommand = define({
 
       const config = loadConfig()
       const extraFlags = config.claude.flags.join(' ')
-      const cmd = `cd ${JSON.stringify(dir)} && claude${extraFlags ? ' ' + extraFlags : ''} --resume ${sessionId} --name ${JSON.stringify(name)}\r`
+      const cmd = `cd ${JSON.stringify(dir)} && claude${extraFlags ? ' ' + extraFlags : ''} --resume ${JSON.stringify(name)}\r`
       await adapter.sendInput(termBlock.blockid, cmd)
       adapter.closeSocket()
-      consola.success(`Tab "${name}" [${tabId.slice(0, 8)}] → claude --resume ${sessionId.slice(0, 8)}… at ${dir}`)
+      consola.success(`Tab "${name}" [${tabId.slice(0, 8)}] → claude --resume "${name}" at ${dir}`)
     } else {
       // No existing tab — create one
       adapter.closeSocket()
       const tabId = await openSession({
         tabName: name,
         dir,
-        claudeCmd: `claude --resume ${sessionId}`,
+        claudeCmd,
       })
-      consola.success(`Tab "${name}" [${tabId.slice(0, 8)}] → claude --resume ${sessionId.slice(0, 8)}… at ${dir} (new tab)`)
+      consola.success(`Tab "${name}" [${tabId.slice(0, 8)}] → claude --resume "${name}" at ${dir} (new tab)`)
     }
   },
 })
