@@ -2,7 +2,6 @@ import { resolve } from 'path'
 import { homedir } from 'os'
 import { define } from 'gunshi'
 import { consola } from 'consola'
-import { select } from '@clack/prompts'
 import { loadConfig } from '../core/config.js'
 import { requireWaveAdapter } from '../core/wave.js'
 import { openSession } from '../core/open-session.js'
@@ -28,38 +27,37 @@ export const resumeCommand = define({
   args: {
     name: { type: 'positional', description: 'Tab / session name' },
     dir: { type: 'positional', description: 'Working directory (default: cwd)' },
+    session: { type: 'string', short: 's', description: 'Session ID to resume (use when multiple sessions share the same name)' },
   },
   async run(ctx) {
     const name = ctx.positionals[1]
     const dir = resolve((ctx.positionals[2] ?? process.cwd()).replace(/^~/, homedir()))
     if (!name) { consola.error('Tab name is required'); process.exit(1) }
 
-    // Find sessions matching the name
-    const sessions = findSessionsByName(dir, name)
+    const explicitSession = ctx.values.session as string | undefined
     let sessionId: string | undefined
 
-    if (sessions.length === 0) {
-      // Fall back to latest session in dir
-      sessionId = findLatestSessionId(dir) ?? undefined
-      if (!sessionId) {
-        consola.error(`No Claude session found for "${name}" in ${dir}`)
-        consola.info(`Looked in ~/.claude/projects/${pathToProjectSlug(dir)}/`)
+    if (explicitSession) {
+      sessionId = explicitSession
+    } else {
+      const sessions = findSessionsByName(dir, name)
+      if (sessions.length === 0) {
+        sessionId = findLatestSessionId(dir) ?? undefined
+        if (!sessionId) {
+          consola.error(`No Claude session found for "${name}" in ${dir}`)
+          consola.info(`Looked in ~/.claude/projects/${pathToProjectSlug(dir)}/`)
+          process.exit(1)
+        }
+        consola.warn(`No session named "${name}" — using latest session ${sessionId.slice(0, 8)}…`)
+      } else if (sessions.length === 1) {
+        sessionId = sessions[0].id
+      } else {
+        consola.error(`Multiple "${name}" sessions found. Use --session <id> to pick one:`)
+        for (const s of sessions) {
+          consola.log(`  ${s.id}  ${formatAge(s.mtime)}  ${formatSize(s.size)}`)
+        }
         process.exit(1)
       }
-      consola.warn(`No session named "${name}" — using latest session ${sessionId.slice(0, 8)}…`)
-    } else if (sessions.length === 1) {
-      sessionId = sessions[0].id
-    } else {
-      // Multiple sessions — show picker
-      const picked = await select({
-        message: `Multiple "${name}" sessions found — pick one:`,
-        options: sessions.map((s) => ({
-          value: s.id,
-          label: `${s.id.slice(0, 8)}…  ${formatAge(s.mtime)}  ${formatSize(s.size)}`,
-        })),
-      })
-      if (typeof picked !== 'string') { process.exit(0) }
-      sessionId = picked
     }
 
     const adapter = requireWaveAdapter()
