@@ -25,8 +25,8 @@ Each session runs in its own terminal tab. `herd` lets you — and other Claude 
 herd sessions                          # list all tabs with session status
 herd list                              # list all workspaces, tabs, and blocks
 herd new <name> [dir] [-w workspace] [-p "prompt"] [-f file]  # new tab + claude
-herd resume <name> [dir]               # new tab + claude --continue
-herd fork <tab-name> [-n new-name]     # fork a session into a new tab
+herd resume <name> [dir]               # resume last session (reuses tab or creates one)
+herd fork <tab-name> [-n new-name]     # fork session into new tab (--resume <id> --fork-session)
 herd close <name-or-id>                # close a tab
 herd rename <name-or-id> <new-name>    # rename a tab
 herd scrollback <tab-or-block> [n]    # read terminal output (default: 50 lines)
@@ -68,13 +68,18 @@ herd new infra ~/Dev/myapp
 
 Each tab is automatically named and the claude session name is synced to the tab title.
 
-## Workflow: Resuming After Restart
+## Workflow: Resuming a Session
+
+`herd resume` finds the latest session ID for the directory and runs `claude --resume <id>`.
+If the named tab still exists, it reuses it. If not, it creates a new tab.
 
 ```bash
-herd sessions   # identify which tabs need resuming
-herd resume auth ~/Dev/myapp
+herd resume auth ~/Dev/myapp       # reuses "auth" tab if it exists, otherwise creates one
 herd resume api ~/Dev/myapp
 ```
+
+**Use `herd resume` instead of `herd new` when you want to continue a previous conversation.**
+`herd new` always starts a fresh Claude session. `herd resume` picks up where the last session left off.
 
 ## Workflow: Forking a Session
 
