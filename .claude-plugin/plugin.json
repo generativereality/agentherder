@@ -1,7 +1,7 @@
 {
   "name": "agentherder",
   "description": "Run a fleet of Claude Code sessions. Terminal tabs as the UI, no tmux. Claude can orchestrate its own sibling sessions.",
-  "version": "0.1.22",
+  "version": "0.1.23",
   "author": {
     "name": "generativereality",
     "url": "https://agentherder.com"

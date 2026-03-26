@@ -57,11 +57,13 @@ export interface SessionMatch {
   id: string
   mtime: number
   size: number
+  firstPrompt: string
+  lastActivity: string
 }
 
 /**
  * Find all sessions with a given custom title (--name).
- * Returns them sorted by most recent first.
+ * Returns them sorted by most recent first, with the first user prompt for context.
  */
 export function findSessionsByName(dir: string, name: string): SessionMatch[] {
   const projectsRoot = join(homedir(), '.claude', 'projects')
@@ -75,10 +77,41 @@ export function findSessionsByName(dir: string, name: string): SessionMatch[] {
     const fullPath = join(projectDir, f)
     try {
       const content = readFileSync(fullPath, 'utf-8')
-      if (content.includes(`"customTitle":"${name}"`) || content.includes(`"customTitle": "${name}"`)) {
-        const stat = statSync(fullPath)
-        matches.push({ id: basename(f, '.jsonl'), mtime: stat.mtimeMs, size: stat.size })
+      if (!content.includes(`"customTitle":"${name}"`) && !content.includes(`"customTitle": "${name}"`)) continue
+
+      const stat = statSync(fullPath)
+      let firstPrompt = ''
+      let lastActivity = ''
+
+      const lines = content.split('\n')
+      for (const line of lines) {
+        if (!line.trim()) continue
+        try {
+          const entry = JSON.parse(line)
+          // First user message
+          if (!firstPrompt && entry.type === 'user' && entry.message?.content) {
+            const text = typeof entry.message.content === 'string'
+              ? entry.message.content
+              : entry.message.content.find((c: { type: string }) => c.type === 'text')?.text ?? ''
+            // Skip system/command messages
+            if (text.startsWith('<')) continue
+            firstPrompt = text.slice(0, 120).replace(/\n/g, ' ').trim()
+            if (text.length > 120) firstPrompt += '…'
+          }
+          // Track last assistant text for context
+          if (entry.message?.role === 'assistant' && entry.message?.content) {
+            const parts = Array.isArray(entry.message.content) ? entry.message.content : [{ type: 'text', text: entry.message.content }]
+            for (const p of parts) {
+              if (p.type === 'text' && p.text?.trim()) {
+                lastActivity = p.text.slice(0, 120).replace(/\n/g, ' ').trim()
+                if (p.text.length > 120) lastActivity += '…'
+              }
+            }
+          }
+        } catch { /* skip malformed lines */ }
       }
+
+      matches.push({ id: basename(f, '.jsonl'), mtime: stat.mtimeMs, size: stat.size, firstPrompt, lastActivity })
     } catch {
       // skip unreadable files
     }

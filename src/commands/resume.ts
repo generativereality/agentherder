@@ -52,9 +52,11 @@ export const resumeCommand = define({
       } else if (sessions.length === 1) {
         sessionId = sessions[0].id
       } else {
-        consola.error(`Multiple "${name}" sessions found. Use --session <id> to pick one:`)
+        consola.error(`Multiple "${name}" sessions found. Use --session <id> to pick one:\n`)
         for (const s of sessions) {
           consola.log(`  ${s.id}  ${formatAge(s.mtime)}  ${formatSize(s.size)}`)
+          if (s.firstPrompt) consola.log(`    start: "${s.firstPrompt}"`)
+          if (s.lastActivity) consola.log(`    last:  "${s.lastActivity}"`)
         }
         process.exit(1)
       }
