@@ -97,7 +97,8 @@ export async function openSession(opts: OpenSessionOptions): Promise<string> {
   }
 
   const extraFlags = config.claude.flags.join(' ')
-  const cmd = `cd ${JSON.stringify(dir)} && ${claudeCmd}${extraFlags ? ' ' + extraFlags : ''} --name ${JSON.stringify(tabName)}\r`
+  const namePart = claudeCmd.includes('--resume') ? '' : ` --name ${JSON.stringify(tabName)}`
+  const cmd = `cd ${JSON.stringify(dir)} && claude${extraFlags ? ' ' + extraFlags : ''} ${claudeCmd.replace(/^claude\s*/, '')}${namePart}\r`
   await adapter.sendInput(blockId, cmd)
 
   if (initialPromptFile) {
