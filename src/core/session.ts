@@ -1,4 +1,4 @@
-import { readdirSync, statSync, existsSync } from 'fs'
+import { readdirSync, readFileSync, statSync, existsSync } from 'fs'
 import { homedir } from 'os'
 import { join, basename, extname } from 'path'
 import { resolve } from 'path'
@@ -51,6 +51,40 @@ export function findLatestSessionId(dir: string): string | null {
   }
 
   return null
+}
+
+export interface SessionMatch {
+  id: string
+  mtime: number
+  size: number
+}
+
+/**
+ * Find all sessions with a given custom title (--name).
+ * Returns them sorted by most recent first.
+ */
+export function findSessionsByName(dir: string, name: string): SessionMatch[] {
+  const projectsRoot = join(homedir(), '.claude', 'projects')
+  const projectDir = join(projectsRoot, pathToProjectSlug(dir))
+  if (!existsSync(projectDir)) return []
+
+  const matches: SessionMatch[] = []
+  const files = readdirSync(projectDir).filter((f) => extname(f) === '.jsonl')
+
+  for (const f of files) {
+    const fullPath = join(projectDir, f)
+    try {
+      const content = readFileSync(fullPath, 'utf-8')
+      if (content.includes(`"customTitle":"${name}"`) || content.includes(`"customTitle": "${name}"`)) {
+        const stat = statSync(fullPath)
+        matches.push({ id: basename(f, '.jsonl'), mtime: stat.mtimeMs, size: stat.size })
+      }
+    } catch {
+      // skip unreadable files
+    }
+  }
+
+  return matches.sort((a, b) => b.mtime - a.mtime)
 }
 
 /**
