@@ -1,9 +1,11 @@
 ---
 name: herd
-description: Manage Claude Code sessions across terminal tabs — list running sessions, open new ones, fork, close, inspect output, and send input. Use this when working with multiple parallel Claude Code sessions.
+description: Manage Claude Code sessions across terminal tabs (NOT browser tabs) — list running sessions, open new ones, fork, close, inspect output, and send input. Use this when working with multiple parallel Claude Code sessions in terminal tabs.
 ---
 
 You are managing Claude Code sessions using the `herd` CLI (Agent Herder).
+
+**Important:** "tabs" here means **terminal tabs** (e.g. Wave Terminal tabs), NOT browser tabs. Each terminal tab runs its own Claude Code session. This skill is for managing those terminal-based Claude Code sessions — not for browser automation.
 
 ## First: Ensure herd is available
 
@@ -17,7 +19,7 @@ Do NOT attempt to install herd globally, modify PATH, add npm dependencies, or f
 
 ---
 
-Each session runs in its own terminal tab. `herd` lets you — and other Claude Code sessions — introspect and orchestrate the full session fleet.
+Each Claude Code session runs in its own **terminal tab**. `herd` lets you — and other Claude Code sessions — introspect and orchestrate the full session fleet.
 
 ## Quick Reference
 
