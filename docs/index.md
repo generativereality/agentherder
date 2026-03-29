@@ -1,12 +1,12 @@
 ---
 layout: home
-title: Agent Herder — Let Claude Code Run Claude Code
-description: Give Claude tab-awareness and watch it spawn 10, 15 parallel sessions on its own — each in a real terminal tab you can see, scroll, and switch to. No tmux. No TUI. Just your terminal.
+title: Agent Herder — Self-aware agentic coding across terminal tabs
+description: Install one plugin and Claude spawns 10, 15 parallel sessions on its own — each in a named terminal tab you can see, scroll, and switch to. No tmux. No TUI.
 
 hero:
   name: Agent Herder
-  text: Let Claude Code run Claude Code
-  tagline: "Stop manually opening sessions like it's 2024. Give Claude tab-awareness and watch it spawn 10, 15 parallel sessions on its own — each in a real terminal tab you can see, scroll, and switch to. No tmux. No TUI. Just your terminal."
+  text: Self-aware agentic coding across terminal tabs
+  tagline: "Install one plugin and Claude spawns 10, 15 parallel sessions on its own — each in a named tab (auth, api, frontend) you can see, scroll, and switch to. No tmux. No TUI."
   actions:
     - theme: brand
       text: Get Started
