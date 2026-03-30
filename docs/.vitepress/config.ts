@@ -1,12 +1,12 @@
 import { defineConfig } from 'vitepress'
 
 const siteUrl = 'https://agentherder.com'
-const ogTitle = 'Agent Herder — run a fleet of Claude Code sessions'
-const ogDescription = 'Terminal tabs as the UI. No tmux. CLI is herd.'
+const ogTitle = 'Agent Herder — Self-aware agentic coding across terminal tabs'
+const ogDescription = 'Install one plugin and Claude spawns 10, 15 parallel sessions on its own — each in a named terminal tab. No tmux. No TUI.'
 
 export default defineConfig({
   title: 'Agent Herder',
-  description: 'Run a fleet of Claude Code sessions. Terminal tabs as the UI, no tmux. CLI is herd.',
+  description: 'Self-aware agentic coding across terminal tabs. Install one plugin and Claude spawns parallel sessions — each in a named terminal tab. No tmux. No TUI.',
   lang: 'en-US',
 
   sitemap: {
@@ -14,7 +14,6 @@ export default defineConfig({
   },
 
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
 
     // OpenGraph
     ['meta', { property: 'og:type', content: 'website' }],
